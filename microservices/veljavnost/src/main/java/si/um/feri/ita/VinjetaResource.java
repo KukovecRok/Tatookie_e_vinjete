@@ -13,9 +13,6 @@ import java.util.List;
 public class VinjetaResource {
 
     @Inject
-    VinjetaConsumer vinjetaConsumer;
-
-    @Inject
     ConnectionFactory connectionFactory;
 
     @POST
@@ -24,13 +21,10 @@ public class VinjetaResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String lastRegistrska(String registrska) {
         System.out.println("Preverjam vinjeto z registrsko: " + registrska);
-        vinjetaConsumer.setLastRegistrska(registrska);
-        String veljavnost = vinjetaService.checkRegistrska(registrska);
-        vinjetaConsumer.setVeljavnost(veljavnost);
         try (JMSContext context = connectionFactory.createContext(JMSContext.AUTO_ACKNOWLEDGE)) {
-            context.createProducer().send(context.createQueue("vinjete"), veljavnost);
+            context.createProducer().send(context.createQueue("vinjete"), registrska);
         }
-        return veljavnost;
+        return "sprejeto";
     }
 
 
@@ -47,5 +41,12 @@ public class VinjetaResource {
         vinjetaService.addVinjeta(vinjeta);
         return list();
     }
+
+    @GET
+    @Path("/zgodovina")
+    public List<Zgodovina> listZgodovina() {
+        return vinjetaService.listZgodovina();
+    }
+
 
 }

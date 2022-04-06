@@ -3,6 +3,7 @@ package si.um.feri.ita.jms.consumer;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
+import si.um.feri.ita.VinjetaService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -41,6 +42,9 @@ public class VinjetaConsumer implements Runnable {
         scheduler.shutdown();
     }
 
+    @Inject
+    VinjetaService vinjetaService;
+
     @Override
     public void run() {
 
@@ -48,12 +52,11 @@ public class VinjetaConsumer implements Runnable {
             JMSConsumer consumer = context.createConsumer(context.createQueue("vinjete"));
             while (true) {
                 Message message = consumer.receive();
-                System.out.println("Preverjam vinjeto: " + message);
                 if (message == null) return;
-                lastRegistrska = message.getBody(String.class);
-                veljavnost = getVeljavnost();
+                Log.info("Preverjam vinjeto: " + message);
+                String veljavnost = vinjetaService.checkRegistrska( message.getBody(String.class));
                 context.createProducer().send(context.createQueue("zgodovina"), veljavnost);
-                Log.info("lastRegistrska: %s".formatted(lastRegistrska));
+                Log.info("lastRegistrska: %s".formatted( message.getBody(String.class)));
             }
         } catch (JMSException e) {
             throw new RuntimeException(e);

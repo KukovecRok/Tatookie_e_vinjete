@@ -19,6 +19,24 @@ public class VinjetaService {
 
     @Inject MongoClient mongoClient;
 
+    public List<Zgodovina> listZgodovina() {
+        List<Zgodovina> lista = new ArrayList<>();
+        try (MongoCursor<Document> cursor = getCollectionZgodovina().find().iterator()) {
+            while (cursor.hasNext()) {
+                Document document = cursor.next();
+                Zgodovina zgodovina = new Zgodovina();
+                zgodovina.setId(document.getObjectId("_id").toHexString());
+                zgodovina.setRezultat(document.getString("Rezultat").toString());
+                zgodovina.setDatum_preverjanja(document.getDate("Datum_preverjanja"));
+                zgodovina.setDatum_veljavnosti(document.getDate("Datum_veljavnosti"));
+                zgodovina.setPreverjena_vinjeta(document.getString("Preverjena_vinjeta"));
+                zgodovina.setVeljavnost(document.getBoolean("Veljavnost"));
+                lista.add(zgodovina);
+            }
+        }
+        return lista;
+    }
+
     public List<Vinjeta> list(){
         List<Vinjeta> list = new ArrayList<>();
 
@@ -100,12 +118,20 @@ public class VinjetaService {
                 result = "Vinjeta  za registrko: " + registrska + " NI veljavna";
             }
             System.out.println(result);
+            boolean vinjeta_veljavna;
+            if (result.contains("NI veljavna")){
+                vinjeta_veljavna = false;
+            }else{
+                vinjeta_veljavna = true;
+            }
+
 
             Document document = new Document()
-                    .append("Rezultat: ", result)
-                    .append("Datum preverjanja: ", new Date(System.currentTimeMillis()))
-                    .append("Datum veljavnosti: ", date_max)
-                    .append("Preverjena vinjeta: ", registrska);
+                    .append("Rezultat", result)
+                    .append("Datum_preverjanja", new Date(System.currentTimeMillis()))
+                    .append("Datum_veljavnosti", date_max)
+                    .append("Preverjena_vinjeta", registrska)
+                    .append("Veljavnost", vinjeta_veljavna);
             getCollectionZgodovina().insertOne(document);
         }
         return result;
