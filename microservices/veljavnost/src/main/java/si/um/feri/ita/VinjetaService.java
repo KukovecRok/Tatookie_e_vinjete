@@ -109,13 +109,13 @@ public class VinjetaService {
                         }
                         if (datum_do.after(date_max)){ // Če je datum vinjete ki jo preverjamo kasnejši od temp max
                             date_max = datum_do; // Zadnji datum - največja veljavnost
-                            result = "Vinjeta  za registrko: " + registrska + " je veljavna do: " + date_max.toString() + " \n "; // Rezultat merge
+                            result = "Vinjeta  za registrsko: " + registrska + " je veljavna do: " + date_max.toString() + " \n "; // Rezultat merge
                         }
                     }
                 }
             }
             if (result == null){
-                result = "Vinjeta  za registrko: " + registrska + " NI veljavna";
+                result = "Vinjeta  za registrsko: " + registrska + " NI veljavna";
             }
             System.out.println(result);
             boolean vinjeta_veljavna;

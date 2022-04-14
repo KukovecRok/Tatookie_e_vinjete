@@ -1,0 +1,64 @@
+version: "3"
+
+services:
+
+  nakup:
+    container_name: nakup
+    image: nakup:latest
+    environment:   
+      MONGO_PASS: root
+      MONGO_USER: root
+    ports:
+      - "8002:8080"
+      
+  veljavnost:
+    container_name: veljavnost
+    image: veljavnost:latest
+    environment:   
+      MONGO_PASS: root
+      MONGO_USER: root
+    ports:
+      - "8003:8080"
+    
+
+  authentication:
+    container_name: authentication
+    image: registry.gitlab.com/domenlum/sua-microservices/authentication
+    restart: always
+    environment:
+      RABBIT_URL: amqp://guest:guest@164.8.164.176:5673/
+      MONGO_PASS: root
+      MONGO_USER: root
+      MONGO_IP: 164.8.164.176
+      JWT_SECRET: wsdefrgthzjkkjhzgtfr
+    ports:
+      - "8001:8001"
+    networks:
+      - envoymesh
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - "5673:5672"
+      - "15672:15672"
+    networks:
+      - envoymesh
+      
+  envoy:
+    build:
+      context: .
+      dockerfile: Dockerfile.envoy
+    volumes:
+      - ./envoy.yaml:/etc/envoy.yaml
+    networks:
+      - envoymesh
+    expose:
+      - "8888"
+      - "1337"
+    ports:
+      - "8888:8888"
+      - "1337:1337"
+
+networks:
+  envoymesh: {}
