@@ -1,40 +1,42 @@
-version: "3"
-
+version: "3.9"
 services:
+  artemis:
+    image: quay.io/artemiscloud/activemq-artemis-broker:1.0.1
+    ports:
+      - "61616:61616"
+      - "5672:5672"
+      - "8161:8161"
+    environment:
+      AMQ_USER: "quarkus"
+      AMQ_PASSWORD: "quarkus"
+      AMQ_EXTRA_ARGS: "--relax-jolokia"
 
-  nakup:
-    container_name: nakup
-    image: nakup:latest
-    environment:   
-      MONGO_PASS: root
-      MONGO_USER: root
+  mongo:
+    image: mongo:5
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "quarkus"
+      MONGO_INITDB_ROOT_PASSWORD: "quarkus"
     ports:
-      - "8002:8080"
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
       
-  veljavnost:
-    container_name: veljavnost
-    image: veljavnost:latest
-    environment:   
-      MONGO_PASS: root
-      MONGO_USER: root
-    ports:
-      - "8003:8080"
-    
 
   authentication:
     container_name: authentication
     image: registry.gitlab.com/domenlum/sua-microservices/authentication
-    restart: always
+    depends_on:
+      - mongo
+      - rabbitmq
     environment:
-      RABBIT_URL: amqp://guest:guest@164.8.164.176:5673/
-      MONGO_PASS: root
-      MONGO_USER: root
-      MONGO_IP: 164.8.164.176
+      RABBIT_URL: amqp://guest:guest@rabbitmq:5672/
+      MONGO_PASS: quarkus
+      MONGO_USER: quarkus
+      MONGO_IP: mongo
       JWT_SECRET: wsdefrgthzjkkjhzgtfr
     ports:
       - "8001:8001"
-    networks:
-      - envoymesh
+      - "8002:8002"
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -42,23 +44,28 @@ services:
     ports:
       - "5673:5672"
       - "15672:15672"
-    networks:
-      - envoymesh
-      
-  envoy:
-    build:
-      context: .
-      dockerfile: Dockerfile.envoy
-    volumes:
-      - ./envoy.yaml:/etc/envoy.yaml
-    networks:
-      - envoymesh
-    expose:
-      - "8888"
-      - "1337"
-    ports:
-      - "8888:8888"
-      - "1337:1337"
 
-networks:
-  envoymesh: {}
+  nakup:
+    image: nakup:0.0.1-SNAPSHOT
+    container_name: 'nakup'
+    depends_on:
+      - mongo
+    ports:
+      - "8081:8080"
+    environment:
+      MONGO_IP: mongo
+
+  veljavnost:
+    image: veljavnost:latest
+    container_name: veljavnost
+    depends_on:
+      - mongo
+      - artemis
+    ports:
+      - "8082:8080"
+    environment:
+      MONGO_IP: mongo
+      ARTEMIS_IP: artemis
+      
+volumes:
+  mongodata:
