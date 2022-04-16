@@ -1,7 +1,7 @@
 Frontend To-BE
 
 ## Usage
-We will know, once we fidn out what we're going to work with
+We will know, once we find out what we're going to work with
 
 ## Compatibility
 Java
