@@ -36,7 +36,7 @@ jobs:
       - name: chmod
         run: chmod +x microservices/veljavnost/mvnw
       - name: maven build
-        run: cd microservices/veljavnost/ && mvn package 
+        run: cd microservices/veljavnost/ && mvn clean package -Dquarkus.container-image.build=true
       - name: docker build
         run:  docker build -f microservices/veljavnost/src/main/docker/Dockerfile.jvm -t ghcr.io/kukovecrok/veljavnost:latest microservices/veljavnost/
       - name: docker push
