@@ -29,6 +29,8 @@ jobs:
           logout: true
       - name: checkout
         uses: actions/checkout@v2
+      - name: chmod
+        run: chmod +x microservices/veljavnost/mvnw
       - name: gradle build push native
         run: cd microservices/veljavnost/ && ./mvnw package -Dnative -Dquarkus.native.container-build=true
       - name: docker build
