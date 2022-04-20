@@ -1,0 +1,26 @@
+http:// {
+    encode zstd gzip
+
+    route /auth/* {
+        uri strip_prefix /auth
+        reverse_proxy authentication:8002
+    }
+
+    route /nakup/* {
+        uri strip_prefix /nakup
+        reverse_proxy nakup:8080
+    }
+
+    route /veljavnost/* {
+        uri strip_prefix /veljavnost
+        reverse_proxy veljavnost:8081
+  }
+
+    route {
+        file_server browse
+    }
+
+}
+
+
+

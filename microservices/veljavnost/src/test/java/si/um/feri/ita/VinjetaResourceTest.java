@@ -8,7 +8,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 public class VinjetaResourceTest {
-    /*
+    /* test
     @Test
     public void testVinjetaEndpointGET() {
         given()
