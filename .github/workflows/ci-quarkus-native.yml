@@ -32,9 +32,9 @@ jobs:
       - name: chmod
         run: chmod +x microservices/veljavnost/mvnw
       - name: gradle build push native
-        run: cd microservices/veljavnost/ && ./mvnw package -Dnative -Dquarkus.native.container-build=true
+        run: cd microservices/veljavnost/ && ./mvnw package 
       - name: docker build
-        run:  docker build -f microservices/veljavnost/src/main/docker/Dockerfile.native-micro -t ghcr.io/kukovecrok/veljavnost-native:latest microservices/veljavnost/
+        run:  docker build -f microservices/veljavnost/src/main/docker/Dockerfile.jvm -t ghcr.io/kukovecrok/veljavnost:latest microservices/veljavnost/
       - name: docker push
-        run: docker image push ghcr.io/kukovecrok/veljavnost-native:latest
+        run: docker image push ghcr.io/kukovecrok/veljavnost:latest
 
