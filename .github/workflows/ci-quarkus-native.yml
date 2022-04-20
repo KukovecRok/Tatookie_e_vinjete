@@ -29,10 +29,14 @@ jobs:
           logout: true
       - name: checkout
         uses: actions/checkout@v2
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.3
+        with:
+          maven-version: 3.8.2
       - name: chmod
         run: chmod +x microservices/veljavnost/mvnw
-      - name: gradle build push native
-        run: cd microservices/veljavnost/ && ./mvnw package 
+      - name: maven build
+        run: cd microservices/veljavnost/ && mvn package 
       - name: docker build
         run:  docker build -f microservices/veljavnost/src/main/docker/Dockerfile.jvm -t ghcr.io/kukovecrok/veljavnost:latest microservices/veljavnost/
       - name: docker push
