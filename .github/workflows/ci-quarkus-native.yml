@@ -30,7 +30,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: gradle build push native
-        run: cd microservices/veljavnost/ && ./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
+        run: cd microservices/veljavnost/ && ./mvnw build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
       - name: docker build
         run:  docker build -f microservices/veljavnost/src/main/docker/Dockerfile.native-micro -t ghcr.io/kukovecrok/veljavnost-native:latest microservices/veljavnost/
       - name: docker push
