@@ -9,8 +9,24 @@ import {Token} from "./grpc/Authentication_pb";
 import { useState } from 'react';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
+import {SubmitHandler, useForm} from "react-hook-form";
+
+type Inputs = {
+    registrska_stevilka: string,
+    cestninski_razred: string,
+    tip: string,
+    model_avta: string,
+    znamka_avta: string
+};
 
 function App() {
+
+    const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
+    const [nakupZaPoslat, setNakupZaPoslat] = useState('');
+    const onSubmit: SubmitHandler<Inputs> = data => {
+        console.log(data)
+        axios.post("http://localhost:8081/vinjete/nakup", data).then((response) => setNakupZaPoslat(response.data)).catch()
+    };
 
     interface VinjeteTest {
         response: string;
@@ -40,8 +56,12 @@ function App() {
     const [error, setError]: [string, (error: string) => void] = React.useState("");
 
     const [registrskaToCheck, setRegistrskaToCheck] = useState('');
+    const [aliSmoPreverli, setAliSmoPreverli] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    const [preverjenaVinjeta, setPreverjenaVinjeta] = useState('');
+
 
     const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         setRegistrskaToCheck(event.currentTarget.value);
@@ -53,15 +73,12 @@ function App() {
         setPassword(event.currentTarget.value);
     }
 
-    function showState() {
-        console.log(registrskaToCheck);
-    }
 
     const [token_login, setToken_login] = useState<boolean>(false);
 
     function login(message: boolean) {
 
-        if (message === true){
+        if (message){
             console.log("Nastavljam na true")
             setToken_login(true);
         }else{
@@ -70,6 +87,10 @@ function App() {
         }
     }
 
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     return (
         <div className="App">
             <header className="App-header">
@@ -188,7 +209,7 @@ function App() {
                         <h1>Vinjete</h1>
                         <div className="card blue darken-4">
                             <div className="card-content white-text">
-                                <span className="card-title">Preveri vinjete</span>
+                                <span className="card-title"><h2>Preveri vinjete</h2></span>
                                     <div className="input-field">
                                         <input
                                             placeholder="Vnesi registrsko številko"
@@ -201,10 +222,43 @@ function App() {
                                     </div>
                             </div>
                             <div className="card-action">
-                                <button onClick={showState} className="btn grey lighten-1 black-text">
+                                <button onClick={() => {
+                                    axios.post("http://localhost:8082/vinjete/preveri", registrskaToCheck, {headers: {'Content-Type' :'text/plain'}}).then((response) => {
+                                        setAliSmoPreverli(response.data);
+                                    }).catch();
+                                    axios.get("http://localhost:8082/vinjete/zgodovina").then((response) => {
+                                        setPreverjenaVinjeta(response.data[0].rezultat);
+                                    }).catch();
+
+                                }} className="btn grey lighten-1 black-text">
                                     Potrdi
                                 </button>
+                                <p>{aliSmoPreverli}</p>
+                                <p>{preverjenaVinjeta}</p>
                             </div>
+                        </div>
+                    </div>
+                    <div className="card blue darken-4">
+                        <div className="card-content white-text">
+                            <span className="card-title"><h2>Kupi vinjete</h2></span>
+                            {/* @ts-ignore*/ }
+                            { token_login &&         <form onSubmit={handleSubmit(onSubmit)}>
+                                {/* register your input into the hook by invoking the "register" function */}
+                                <input defaultValue="MBUR535" {...register("registrska_stevilka", { required: true })} />
+                                <input defaultValue="B2" {...register("cestninski_razred", { required: true })} />
+                                <input defaultValue="mesecna" {...register("tip", { required: true })} />
+                                <input defaultValue="Trafic" {...register("model_avta", { required: true })} />
+                                <input defaultValue="Renault" {...register("znamka_avta", { required: true })} />
+
+                                {errors.registrska_stevilka && <span>This field is required</span>}
+                                {errors.cestninski_razred && <span>This field is required</span>}
+                                {errors.tip && <span>This field is required</span>}
+                                {errors.model_avta && <span>This field is required</span>}
+                                {errors.znamka_avta && <span>This field is required</span>}
+
+                                <input type="submit" />
+                            </form>}
+                            <p> {nakupZaPoslat}</p>
                         </div>
                     </div>
                 </div>}
@@ -215,6 +269,7 @@ function App() {
                                  "\n" + statusVinjete}</>
                         </div>
                 }
+
             </header>
         </div>
     );
