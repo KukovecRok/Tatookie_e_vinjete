@@ -44,7 +44,7 @@ services:
       - "15672:15672"
 
   nakup:
-    image: nakup:0.0.1-SNAPSHOT
+    image: ghcr.io/kukovecrok/nakup:latest
     container_name: 'nakup'
     depends_on:
       - mongo
@@ -54,13 +54,13 @@ services:
       MONGO_IP: mongo
 
   veljavnost:
-    image: veljavnost:latest
-    container_name: veljavnost
+    image: ghcr.io/kukovecrok/veljavnost:latest
+    container_name: 'veljavnost'
     depends_on:
       - mongo
       - artemis
     ports:
-      - "8082:8080"
+      - "8082:8081"
     environment:
       MONGO_IP: mongo
       ARTEMIS_IP: artemis
