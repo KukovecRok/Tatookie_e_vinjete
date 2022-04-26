@@ -4,7 +4,7 @@ Frontend To-BE
 We will know, once we find out what we're going to work with
 
 ## Compatibility
-Java
+> React grpc-web
 
 ## License
 
