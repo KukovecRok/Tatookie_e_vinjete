@@ -3,6 +3,8 @@ kind: Service
 metadata:
   annotations:
     kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.service.group: ia
+    kompose.service.type: NodePort
     kompose.version: 1.26.1 (a9d05d509)
   creationTimestamp: null
   labels:
@@ -10,13 +12,11 @@ metadata:
   name: authentication
 spec:
   ports:
-    - name: "8001"
-      port: 8001
-      targetPort: 8001
     - name: "8002"
       port: 8002
       targetPort: 8002
   selector:
     io.kompose.service: authentication
+  type: NodePort
 status:
   loadBalancer: {}

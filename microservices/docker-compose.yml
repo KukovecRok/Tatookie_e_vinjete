@@ -3,13 +3,16 @@ services:
   artemis:
     image: quay.io/artemiscloud/activemq-artemis-broker:1.0.1
     ports:
-      - "61616:61616"
-      - "5672:5672"
-      - "8161:8161"
+      - "61616"
+      - "5672"
+      - "8161"
     environment:
       AMQ_USER: "quarkus"
       AMQ_PASSWORD: "quarkus"
       AMQ_EXTRA_ARGS: "--relax-jolokia"
+    labels:
+      kompose.service.group: "ia"
+      kompose.service.type: NodePort
 
   mongo:
     image: mongo:5
@@ -17,7 +20,10 @@ services:
       MONGO_INITDB_ROOT_USERNAME: "quarkus"
       MONGO_INITDB_ROOT_PASSWORD: "quarkus"
     ports:
-      - "27017:27017"
+      - "27017"
+    labels:
+      kompose.service.group: "ia"
+      kompose.service.type: NodePort
       
 
   authentication:
@@ -34,15 +40,20 @@ services:
       MONGO_PORT: 27017
       JWT_SECRET: wsdefrgthzjkkjhzgtfr
     ports:
-      - "8001:8001"
-      - "8002:8002"
+      - "8002"
+    labels:
+      kompose.service.group: "ia"
+      kompose.service.type: NodePort
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: 'rabbitmq'
     ports:
-      - "5673:5672"
-      - "15672:15672"
+      - "5672"
+      - "15672"
+    labels:
+      kompose.service.group: "ia"
+      kompose.service.type: NodePort
 
   nakup:
     image: ghcr.io/kukovecrok/nakup:latest
@@ -50,9 +61,12 @@ services:
     depends_on:
       - mongo
     ports:
-      - "8081:8080"
+      - "8080"
     environment:
       MONGO_IP: mongo
+    labels:
+      kompose.service.group: "ia"
+      kompose.service.type: NodePort
 
   veljavnost:
     image: ghcr.io/kukovecrok/veljavnost:latest
@@ -61,10 +75,13 @@ services:
       - mongo
       - artemis
     ports:
-      - "8082:8081"
+      - "8081"
     environment:
       MONGO_IP: mongo
       ARTEMIS_IP: artemis
+    labels:
+      kompose.service.group: "ia"
+      kompose.service.type: NodePort
 
   front-end:
     image: ghcr.io/kukovecrok/frontend:latest
