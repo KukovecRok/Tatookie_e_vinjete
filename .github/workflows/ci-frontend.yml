@@ -1,11 +1,11 @@
-name: ci-spring
+name: ci-frontend
 
 on:
   push:
     branches: [main]
     paths:
       - ".github/workflows/ci-frontend.yml"
-      - "front-end/**"
+      - "frontend/**"
   pull_request:
     branches: [main]
 
@@ -13,7 +13,7 @@ permissions:
   packages: write
 
 concurrency:
-  group: ci-spring
+  group: ci-frontend
 
 jobs:
   build-image:
