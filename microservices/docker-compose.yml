@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3"
 services:
   artemis:
     image: quay.io/artemiscloud/activemq-artemis-broker:1.0.1
@@ -31,6 +31,7 @@ services:
       MONGO_PASS: quarkus
       MONGO_USER: quarkus
       MONGO_IP: mongo
+      MONGO_PORT: 27017
       JWT_SECRET: wsdefrgthzjkkjhzgtfr
     ports:
       - "8001:8001"
@@ -64,3 +65,15 @@ services:
     environment:
       MONGO_IP: mongo
       ARTEMIS_IP: artemis
+
+  front-end:
+    image: ghcr.io/kukovecrok/frontend:latest
+    depends_on:
+      - veljavnost
+      - nakup
+      - authentication
+    ports:
+      - "80:80"
+    labels:
+      kompose.service.group: "ia"
+      kompose.service.type: LoadBalancer

@@ -25,7 +25,7 @@ function App() {
     const [nakupZaPoslat, setNakupZaPoslat] = useState('');
     const onSubmit: SubmitHandler<Inputs> = data => {
         console.log(data)
-        axios.post("http://localhost:8081/vinjete/nakup", data).then((response) => setNakupZaPoslat(response.data)).catch()
+        axios.post("nakup/vinjete/nakup", data).then((response) => setNakupZaPoslat(response.data)).catch()
     };
 
     interface VinjeteTest {
@@ -35,7 +35,7 @@ function App() {
 
     React.useEffect(() => {
         axios
-            .get<VinjeteTest[]>("http://localhost:8081/vinjete/test")
+            .get<VinjeteTest[]>("nakup/vinjete/test")
             .then(response => {
                 console.log(response.data);
                 setStatusVinjete(response.data);
@@ -102,7 +102,7 @@ function App() {
                         grpc.invoke(AuthenticationAPI.Ping, {
                             request: new Empty(),
                             metadata: meta,
-                            host: 'http://localhost:8002',
+                            host: '/auth',
                             onHeaders: (headers: grpc.Metadata) => {
                                 console.log(headers);
                             },
@@ -144,7 +144,7 @@ function App() {
                         grpc.invoke(AuthenticationAPI.Register, {
                             request: registracija,
                             metadata: meta,
-                            host: 'http://localhost:8002',
+                            host: '/auth',
                             onHeaders: (headers: grpc.Metadata) => {
                                 console.log(headers);
                             },
@@ -171,7 +171,7 @@ function App() {
                         grpc.invoke(AuthenticationAPI.Login, {
                             request: loginiraj,
                             metadata: meta,
-                            host: 'http://localhost:8002',
+                            host: '/auth',
                             onHeaders: (headers: grpc.Metadata) => {
                                 console.log(headers);
                             },
@@ -223,10 +223,10 @@ function App() {
                             </div>
                             <div className="card-action">
                                 <button onClick={() => {
-                                    axios.post("http://localhost:8082/vinjete/preveri", registrskaToCheck, {headers: {'Content-Type' :'text/plain'}}).then((response) => {
+                                    axios.post("veljavnost/vinjete/preveri", registrskaToCheck, {headers: {'Content-Type' :'text/plain'}}).then((response) => {
                                         setAliSmoPreverli(response.data);
                                     }).catch();
-                                    axios.get("http://localhost:8082/vinjete/zgodovina").then((response) => {
+                                    axios.get("veljavnost/vinjete/zgodovina").then((response) => {
                                         setPreverjenaVinjeta(response.data[0].rezultat);
                                     }).catch();
 
