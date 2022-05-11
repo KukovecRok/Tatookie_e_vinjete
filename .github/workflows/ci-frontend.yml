@@ -1,0 +1,40 @@
+name: ci-spring
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ci-frontend.yml"
+      - "front-end/**"
+  pull_request:
+    branches: [main]
+
+permissions:
+  packages: write
+
+concurrency:
+  group: ci-spring
+
+jobs:
+  build-image:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: login ghcr.io
+        uses: docker/login-action@v1.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          logout: true
+      - name: checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: yarn install build
+        run: cd frontend/ && CI=false yarn install && CI=false yarn build
+      - name: build docker image
+        run: cd frontend/ && docker build -t ghcr.io/kukovecrok/frontend:latest .
+      - name: docker push
+        run: docker image push ghcr.io/kukovecrok/frontend:latest
