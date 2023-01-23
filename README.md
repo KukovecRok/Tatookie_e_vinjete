@@ -8,9 +8,9 @@ A school project
 Frontend with Caddy (Go), gRPC and React.
 
 Three microservices:
-* Authentication 
-* Java-maven
-* Java-Quarkus
+* Authentication (Go)
+* Purchase (Java-maven)
+* Validity (Java-Quarkus)
 
 ## Technologies
 * RabbitMQ
