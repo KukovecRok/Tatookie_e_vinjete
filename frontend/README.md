@@ -1,7 +1,8 @@
 Frontend To-BE
 
 ## Usage
-We will know, once we find out what we're going to work with
+
+Frontend with Caddy (Go), gRPC and React. 
 
 ## Compatibility
 > React grpc-web

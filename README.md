@@ -3,9 +3,20 @@ E-Vinjete - IT Arhitekture
 
 A school project 
 
-## Usage
+## Contains
 
-On your own risk
+Frontend with Caddy (Go), gRPC and React.
+
+Three microservices:
+* Authentication 
+* Java-maven
+* Java-Quarkus
+
+## Technologies
+* RabbitMQ
+* MongoDB
+* Kubernetes - Minikube - Kompose
+* Artemis
 
 ## License
 
